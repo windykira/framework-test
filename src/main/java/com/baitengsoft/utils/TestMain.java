@@ -1,9 +1,11 @@
 package com.baitengsoft.utils;
 
 import com.baitengsoft.framework.annotation.Controller;
+import com.baitengsoft.framework.annotation.Inject;
 import com.baitengsoft.framework.annotation.Request;
 import com.baitengsoft.framework.annotation.Service;
 import com.baitengsoft.test.AnnotationClassTemplate;
+import com.sun.istack.internal.Pool;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -79,14 +81,24 @@ public class TestMain {
 
         for (Class<?> actionClass : list){
 
-            Method[] actionMethods = actionClass.getDeclaredMethods();
+            Field[] beanFields = actionClass.getDeclaredFields();
+            for (Field beanField : beanFields){
+
+                if (beanField.isAnnotationPresent(Inject.class)){
+
+                    Class<?> interfaceClass = beanField.getType();
+                    boolean flag = interfaceClass.isAnnotationPresent(Service.class);
+                    assert interfaceClass != null;
+                }
+            }
+            /*Method[] actionMethods = actionClass.getDeclaredMethods();
             for (Method actionMethod : actionMethods){
 
                 if (actionMethod.isAnnotationPresent(Request.Get.class)){
                     String requestPath = actionMethod.getAnnotation(Request.Get.class).value();
                     assert requestPath != null;
                 }
-            }
+            }*/
         }
         assert list != null;
     }
